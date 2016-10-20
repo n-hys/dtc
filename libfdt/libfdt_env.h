@@ -54,9 +54,12 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include <stdlib.h>
+#if defined(_KERNEL) && !defined(_BOOT)
+#include <sys/sunddi.h>
+#include <sys/systm.h>
+#else
 #include <string.h>
-
+#endif
 #ifdef __CHECKER__
 #define __force __attribute__((force))
 #define __bitwise __attribute__((bitwise))
@@ -69,7 +72,7 @@ typedef uint16_t __bitwise fdt16_t;
 typedef uint32_t __bitwise fdt32_t;
 typedef uint64_t __bitwise fdt64_t;
 
-#define EXTRACT_BYTE(x, n)	((unsigned long long)((uint8_t *)&x)[n])
+#define EXTRACT_BYTE(x, n)	((unsigned long long)((volatile uint8_t *)&x)[n])
 #define CPU_TO_FDT16(x) ((EXTRACT_BYTE(x, 0) << 8) | EXTRACT_BYTE(x, 1))
 #define CPU_TO_FDT32(x) ((EXTRACT_BYTE(x, 0) << 24) | (EXTRACT_BYTE(x, 1) << 16) | \
 			 (EXTRACT_BYTE(x, 2) << 8) | EXTRACT_BYTE(x, 3))
